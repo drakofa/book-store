@@ -3,86 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookStore - Ваш книжный магазин</title>
+    <title>BookStore</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
     <div id="app">
-        <!-- Header -->
+        <!-- Шапка -->
         <header class="header">
             <div class="container">
-                <div class="header-content">
-                    <div class="logo">
-                        <h1>📚 BookStore</h1>
-                    </div>
-                    
-                    <!-- Поиск -->
-                    <div class="search-container">
-                        <input 
-                            type="text" 
-                            v-model="searchQuery" 
-                            placeholder="Поиск книг..."
-                            class="search-input"
-                        >
-                    </div>
-
-                    <!-- Избранное -->
-                    <div class="favorites-header">
-                        <button @click="showFavorites = !showFavorites" class="favorites-btn">
-                            ❤️ Избранное ({{ favoritesCount }})
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Навигация -->
-                <nav class="navigation">
-                    <ul class="nav-menu">
-                        <li><a href="#" @click.prevent="setCategory('all')">Все книги</a></li>
-                        <li><a href="#" @click.prevent="setCategory('fiction')">Художественная</a></li>
-                        <li><a href="#" @click.prevent="setCategory('science')">Научная</a></li>
-                        <li><a href="#" @click.prevent="setCategory('children')">Детская</a></li>
-                        <li><a href="#" @click.prevent="setCategory('business')">Бизнес</a></li>
-                    </ul>
+                <h1 @click="goToHome" class="logo">📚 BookStore</h1>
+                <nav class="nav">
+                    <button @click="goToHome" class="nav-btn">Каталог</button>
+                    <button @click="showFavorites = !showFavorites" class="nav-btn">
+                        Избранное ({{ favoritesCount }})
+                    </button>
                 </nav>
             </div>
         </header>
 
-        <!-- Основной контент -->
         <main class="main">
             <div class="container">
-                <!-- Сетка книг -->
-                <div class="books-grid">
-                    <div 
-                        v-for="book in filteredBooks" 
-                        :key="book.id" 
-                        class="book-card"
-                    >
-                        <div class="book-image">
-                            <img :src="book.cover" :alt="book.title">
+                <!-- Страница каталога -->
+                <div v-if="currentView === 'catalog'" class="catalog-page">
+                    <h2>Каталог книг</h2>
+                    <div class="books-grid">
+                        <div 
+                            v-for="book in books" 
+                            :key="book.id" 
+                            class="book-card"
+                            @click="openBook(book)"
+                        >
+                            <div class="book-image">
+                                <img :src="book.cover" :alt="book.title">
+                                <button 
+                                    @click.stop="toggleFavorite(book.id)"
+                                    class="favorite-btn"
+                                    :class="{ active: isFavorite(book.id) }"
+                                >
+                                    ♥
+                                </button>
+                            </div>
+                            <div class="book-info">
+                                <h3>{{ book.title }}</h3>
+                                <p class="author">{{ book.author }}</p>
+                                <p class="price">{{ book.price }} ₽</p>
+                            </div>
                         </div>
-                        <div class="book-info">
-                            <h3 class="book-title">{{ book.title }}</h3>
-                            <p class="book-author">{{ book.author }}</p>
-                            <p class="book-price">{{ book.price }} ₽</p>
-                            <button 
-                                @click="toggleFavorite(book.id)"
-                                class="favorite-btn"
-                            >
-                                {{ isFavorite(book.id) ? '❤️' : '🤍' }}
-                            </button>
+                    </div>
+                </div>
+
+                <!-- Страница книги -->
+                <div v-if="currentView === 'book'" class="book-page">
+                    <button @click="goToHome" class="back-btn">← Назад к каталогу</button>
+                    
+                    <div v-if="currentBook" class="book-detail">
+                        <div class="book-detail-image">
+                            <img :src="currentBook.cover" :alt="currentBook.title">
+                        </div>
+                        <div class="book-detail-info">
+                            <h1>{{ currentBook.title }}</h1>
+                            <p class="author">{{ currentBook.author }}</p>
+                            <p class="description">{{ currentBook.description }}</p>
+                            <p class="price">{{ currentBook.price }} ₽</p>
+                            
+                            <div class="actions">
+                                <button 
+                                    @click="toggleFavorite(currentBook.id)"
+                                    class="favorite-btn large"
+                                    :class="{ active: isFavorite(currentBook.id) }"
+                                >
+                                    {{ isFavorite(currentBook.id) ? '❤️ В избранном' : '🤍 В избранное' }}
+                                </button>
+                                <button class="buy-btn">Купить</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- Подвал -->
-        <footer class="footer">
-            <div class="container">
-                <p>&copy; 2024 BookStore. Все права защищены.</p>
+        <!-- Боковая панель избранного -->
+        <div v-if="showFavorites" class="favorites-sidebar">
+            <div class="sidebar-header">
+                <h3>Избранное</h3>
+                <button @click="showFavorites = false" class="close-btn">×</button>
             </div>
-        </footer>
+            <div v-if="favoriteBooks.length === 0" class="empty">
+                В избранном пока ничего нет
+            </div>
+            <div v-else class="favorites-list">
+                <div 
+                    v-for="book in favoriteBooks" 
+                    :key="book.id" 
+                    class="favorite-item"
+                    @click="openBook(book)"
+                >
+                    <img :src="book.cover" :alt="book.title">
+                    <div class="favorite-info">
+                        <h4>{{ book.title }}</h4>
+                        <p>{{ book.price }} ₽</p>
+                    </div>
+                    <button @click.stop="removeFromFavorites(book.id)" class="remove-btn">×</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Затемнение фона -->
+        <div v-if="showFavorites" class="overlay" @click="showFavorites = false"></div>
     </div>
 
     <script src="data/books.js"></script>

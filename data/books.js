@@ -5,7 +5,7 @@ const booksData = [
         author: "Михаил Булгаков",
         price: 450,
         category: "fiction",
-        cover: "https://via.placeholder.com/200x300/4A90E2/FFFFFF?text=Мастер+и+Маргарита",
+        cover: "D:/lab_work/webdev/2.vue/book-store/img/item_image2507.jpg",
         description: "Великий роман о любви, искусстве и борьбе добра со злом."
     },
     {
@@ -14,7 +14,7 @@ const booksData = [
         author: "Федор Достоевский",
         price: 520,
         category: "fiction",
-        cover: "https://via.placeholder.com/200x300/50E3C2/FFFFFF?text=Преступление+и+наказание",
+        cover: "D:/lab_work/webdev/2.vue/book-store/img/a915208d-9e3a-4293-beb9-06d77344f3d5.jpg",
         description: "Психологическая драма о молодом студенте, совершившем преступление."
     },
     {
@@ -23,7 +23,7 @@ const booksData = [
         author: "Джоан Роулинг",
         price: 680,
         category: "children",
-        cover: "https://via.placeholder.com/200x300/B8E986/FFFFFF?text=Гарри+Поттер",
+        cover: "D:/lab_work/webdev/2.vue/book-store/img/3f68a41d-d7ec-4f1b-ae7b-36376eb66430.jpg",
         description: "Первая книга о приключениях юного волшебника Гарри Поттера."
     },
     {
@@ -32,7 +32,7 @@ const booksData = [
         author: "Стивен Хокинг",
         price: 890,
         category: "science",
-        cover: "https://via.placeholder.com/200x300/9013FE/FFFFFF?text=История+времени",
+        cover: "D:/lab_work/webdev/2.vue/book-store/img/A_Brief_History_of_Time(rus).jpg",
         description: "Научно-популярная книга о происхождении Вселенной и природе времени."
     },
     {
@@ -41,7 +41,7 @@ const booksData = [
         author: "Стивен Кови",
         price: 720,
         category: "business",
-        cover: "https://via.placeholder.com/200x300/F5A623/FFFFFF?text=7+навыков",
+        cover: "D:/lab_work/webdev/2.vue/book-store/img/face_Dnevnik.jpg",
         description: "Классика литературы по саморазвитию и личной эффективности."
     },
     {
@@ -50,7 +50,7 @@ const booksData = [
         author: "Джордж Оруэлл",
         price: 490,
         category: "fiction",
-        cover: "https://via.placeholder.com/200x300/D0021B/FFFFFF?text=1984",
+        cover: "D:/lab_work/webdev/2.vue/book-store/img/1984_4.jpg",
         description: "Антиутопия о тоталитарном обществе и потере индивидуальности."
     }
 ];

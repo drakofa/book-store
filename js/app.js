@@ -3,59 +3,37 @@ const { createApp } = Vue;
 createApp({
     data() {
         return {
-            // Данные книг
-            books: booksData,
-            
-            // Поиск и фильтрация
-            searchQuery: '',
-            currentCategory: 'all',
-            
-            // Избранное
-            favorites: JSON.parse(localStorage.getItem('bookFavorites')) || [],
+            currentView: 'catalog', // 'catalog' или 'book'
+            currentBook: null,
             showFavorites: false,
-            
-            // Пагинация
-            currentPage: 1,
-            itemsPerPage: 6
+            books: booksData,
+            favorites: JSON.parse(localStorage.getItem('bookFavorites')) || []
         }
     },
     
     computed: {
-        // Фильтрация книг
-        filteredBooks() {
-            let filtered = this.books;
-            
-            // Фильтр по категории
-            if (this.currentCategory !== 'all') {
-                filtered = filtered.filter(book => book.category === this.currentCategory);
-            }
-            
-            // Поиск
-            if (this.searchQuery) {
-                const query = this.searchQuery.toLowerCase();
-                filtered = filtered.filter(book => 
-                    book.title.toLowerCase().includes(query) ||
-                    book.author.toLowerCase().includes(query)
-                );
-            }
-            
-            return filtered;
-        },
-        
-        // Количество избранных
         favoritesCount() {
             return this.favorites.length;
+        },
+        
+        favoriteBooks() {
+            return this.books.filter(book => this.favorites.includes(book.id));
         }
     },
     
     methods: {
-        // Установка категории
-        setCategory(category) {
-            this.currentCategory = category;
-            this.currentPage = 1;
+        // Навигация
+        goToHome() {
+            this.currentView = 'catalog';
+            this.currentBook = null;
         },
         
-        // Работа с избранным
+        openBook(book) {
+            this.currentBook = book;
+            this.currentView = 'book';
+        },
+        
+        // Избранное
         toggleFavorite(bookId) {
             const index = this.favorites.indexOf(bookId);
             if (index > -1) {
@@ -66,6 +44,11 @@ createApp({
             this.saveFavorites();
         },
         
+        removeFromFavorites(bookId) {
+            this.favorites = this.favorites.filter(id => id !== bookId);
+            this.saveFavorites();
+        },
+        
         isFavorite(bookId) {
             return this.favorites.includes(bookId);
         },
@@ -73,9 +56,5 @@ createApp({
         saveFavorites() {
             localStorage.setItem('bookFavorites', JSON.stringify(this.favorites));
         }
-    },
-    
-    mounted() {
-        console.log('BookStore загружен!');
     }
 }).mount('#app');
